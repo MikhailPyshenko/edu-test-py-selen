@@ -1,0 +1,5 @@
+FIRST_NAME_INPUT = "#first-name"
+LAST_NAME_INPUT = "#last-name"
+POSTAL_CODE_INPUT = "#postal-code"
+CONTINUE_BUTTON = "#continue"
+FINISH_BUTTON = "#finish"
