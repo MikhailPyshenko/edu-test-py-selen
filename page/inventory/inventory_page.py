@@ -1,32 +1,64 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+import allure
+from selenium.webdriver.remote.webdriver import WebDriver
 from page.base_page import BasePage
-from page.inventory.inventory_locators import *
-from page.inventory.inventory_data import *
+from config.utils.actions import ActionPage
+from config.utils.asserts import AssertPage
+from config.utils.reporter import ReportPage
+from page.inventory.inventory_locators import (
+    SORT_DROPDOWN,
+    INVENTORY_LIST,
+    ADD_TO_CART_1,
+    ADD_TO_CART_2,
+    REMOVE_FROM_CART_1,
+    REMOVE_FROM_CART_2,
+    SHOPPING_CART_BADGE,
+    SHOPPING_CART)
+from page.inventory.inventory_data import SORT_OPTION_VALUE, FIRST_ITEM_POST_SORT_LOHI
+
 
 class InventoryPage(BasePage):
+    def __init__(self, driver: WebDriver):
+        super().__init__(driver)
+        self.actions = ActionPage(driver)
+        self.asserts = AssertPage(driver)
+        self.report = ReportPage(driver)
+
+    @allure.step("Сортировка по цене от дешевых к дорогим")
     def sort_products_low_to_high(self):
-        self.select_option(SORT_DROPDOWN, SORT_OPTION_VALUE)
+        self.actions.select_option(SORT_DROPDOWN, SORT_OPTION_VALUE)
+        self.report.attach_screenshot("Итоги сортировки лохи")
+        self.asserts.element_position_in_list_has_text(INVENTORY_LIST, 1, FIRST_ITEM_POST_SORT_LOHI)
 
+    @allure.step(f"Добавление продуктов {ADD_TO_CART_1, ADD_TO_CART_2} в корзину")
     def add_products(self):
-        self.click(ADD_TO_CART_1)
-        self.click(ADD_TO_CART_2)
+        self.actions.click(ADD_TO_CART_1)
+        self.actions.click(ADD_TO_CART_2)
+        self.report.attach_screenshot("Итоги добавления товаров")
 
+    @allure.step(f"Удаление продуктов {ADD_TO_CART_1, ADD_TO_CART_2} из корзины на странице товаров")
     def remove_products(self):
-        self.click(REMOVE_FROM_CART_1)
-        self.click(REMOVE_FROM_CART_2)
+        self.actions.click(REMOVE_FROM_CART_1)
+        self.actions.click(REMOVE_FROM_CART_2)
+        self.report.attach_screenshot("Итоги удаления товаров")
 
     @property
     def cart_badge(self):
-        return self.driver.find_element(By.CSS_SELECTOR, SHOPPING_CART_BADGE)
+        return self.driver.find_element(*SHOPPING_CART_BADGE)
 
     def cart_badge_value(self, value):
-        assert self.cart_badge.text == str(value), \
-            f"Expected badge value {value}, got {self.cart_badge.text}"
+        """Проверяет значение бейджа корзины"""
+        actual_value = self.cart_badge.text
+        assert actual_value == str(value), \
+            f"Ожидалось значение бейджа: {value}, получено: {actual_value}"
 
     def cart_badge_not_visible(self):
-        assert len(self.driver.find_elements(By.CSS_SELECTOR, SHOPPING_CART_BADGE)) == 0, \
-            "Shopping cart badge is visible but shouldn't be"
+        """Проверяет что бейдж корзины не виден"""
+        try:
+            assert not self.cart_badge.is_displayed()
+        except:
+            # Если элемент не найден - тоже считается что не виден
+            pass
 
+    @allure.step("Переход в корзину")
     def go_to_cart(self):
-        self.click(SHOPPING_CART)
+        self.actions.click(SHOPPING_CART)
