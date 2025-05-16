@@ -14,6 +14,10 @@ def get_logger(name: str = "test"):
 
     logger.setLevel(logging.DEBUG)
 
+    # Понижаем уровень логирования для Selenium и urllib3
+    logging.getLogger('selenium').setLevel(logging.WARNING)
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+
     formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
     log_file = os.path.join(LOG_DIR, "test.log")

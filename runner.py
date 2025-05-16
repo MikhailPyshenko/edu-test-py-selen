@@ -4,25 +4,25 @@ import os
 # Путь к директории с результатами Allure
 allure_results_dir = "reports/allure-results"
 
-# Удалить старые результаты, если нужно
-if os.path.exists(allure_results_dir):
-    for file in os.listdir(allure_results_dir):
-        os.remove(os.path.join(allure_results_dir, file))
-else:
-    os.makedirs(allure_results_dir)
-
 # Команда запуска pytest
-command = [
+command_pytest = [
     "pytest",
-    "smoke/test_smoke_saucedemo.py",
+    "test/smoke/test_smoke_saucedemo.py",
     "--browser=firefox",
     "--headless",
+    "--alluredir=" + allure_results_dir,
+]
+
+command_allure = [
+    "allure",
+    "serve",
+    allure_results_dir,
 ]
 
 # Запуск тестов
-result = subprocess.run(command)
+result = subprocess.run(command_pytest)
+# Сборка отчета
+report = subprocess.run(command_allure)
 
 # Код завершения
 exit(result.returncode)
-
-#    "--alluredir=" + allure_results_dir,
