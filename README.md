@@ -115,8 +115,7 @@ allure serve reports/allure-results
 │   ├── /load/                      # нагрузочное (locust)
 │   │   ├── locust_smoke.py
 │   │   └── __init__.py 
-│   ├── example_test.py             # пример построения тестов
-│   └── runner.py                   # запускатор для тестовых прогонов
+│   └── example_test.py             # пример построения тестов
 ├── /config/                        
 │   ├── /utils/                     
 │   │   ├── actions.py              # действия
@@ -142,6 +141,7 @@ allure serve reports/allure-results
 │   └── GIT.md                      # описание работы с git и bitbucket
 ├── conftest.py                     # фикстуры pytest для конфигурации тестов и отчетности allure
 ├── pytest.ini                      # настройки pytest
+├── runner.py                       # запускатор для тестовых прогонов
 ├── requirements.txt                # зависимости
 ├── README.md                       # описание проекта
 └── .gitignore                      # игнор лист git
